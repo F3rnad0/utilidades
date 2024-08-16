@@ -1,16 +1,76 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unimentor Citas</title>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
-</head>
-<body>
-    <div id="citas-container"></div>
+    <title>Mostrar Citas del Usuario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #d9f2f8ff;
+            margin: 0;
+            color: #333;
+        }
 
-    <script>
+        h1 {
+            color: #000;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .text-box {
+            background-color: #0d9f96ff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+        }
+
+        .text-box h3 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .text-box p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #ffffff;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .text-box img {
+            max-width: 100%;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Citas del Usuario</h1>
+    <div id="citas-container" class="container"></div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
         // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBi1bxaWC2r5jtLtfBI6yqS7ejsWtgAJmI",
@@ -24,65 +84,55 @@
         };
 
         // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
-        // Obtener el ID del usuario desde la URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const usuarioId = urlParams.get('usuarioId');
+        // Obtener la lista de elementos desde Firebase
+        const dbRef = ref(database);
 
-        if (usuarioId) {
-            // Obtener la lista de elementos desde Firebase filtrando por ID de usuario
-            const dbRef = database.ref('citas');
-            dbRef.once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    const allCitas = snapshot.val();
-                    const citasUsuario = {};
-
-                    // Filtrar las citas del usuario actual
+        // Obtener la lista de elementos desde Firebase
+        get(child(dbRef, 'citas')).then((snapshot) => {
+            const container = document.getElementById('citas-container');
+            if (snapshot.exists()) {
+                const allCitas = snapshot.val();
+                if (Object.keys(allCitas).length > 0) {
+                    // Mostrar las citas en el contenedor
                     for (const key in allCitas) {
-                        if (allCitas[key].usuario === usuarioId) {
-                            citasUsuario[key] = allCitas[key];
+                        const cita = allCitas[key];
+                        if (cita.id_usuario == "-O4R6PnmaAuNbqCA2X9m" && cita.estado != "Cerrada") {
+                            const divCita = document.createElement('div');
+                            divCita.className = 'text-box';
+                            const tittleH3 = document.createElement('h3');
+                            const fechaP = document.createElement('p');
+                            const horaP = document.createElement('p');
+                            const motivoP = document.createElement('p');
+
+                            tittleH3.textContent = 'Cita en : ' + cita.nombre_evento;
+                            fechaP.textContent = 'Fecha: ' + cita.fecha;
+                            horaP.textContent = 'Hora: ' + cita.hora;
+                            motivoP.textContent = 'Motivo: ' + cita.motivo;
+
+                            divCita.appendChild(tittleH3);
+                            divCita.appendChild(fechaP);
+                            divCita.appendChild(horaP);
+                            divCita.appendChild(motivoP);
+
+                            container.appendChild(divCita);
+                        } else {
+                            container.innerHTML = '<p>No tienes citas Pendientes.</p>';
                         }
                     }
-
-                    // Mostrar las citas en el contenedor
-                    const container = document.getElementById('citas-container');
-                    for (const key in citasUsuario) {
-                        const cita = citasUsuario[key];
-                        const divEvento = document.createElement('div');
-                        divEvento.className = 'text-box';
-                        const tittleH3 = document.createElement('h3');
-                        const datetimeP = document.createElement('p');
-                        const descripcionP = document.createElement('p');
-                        const imgEvento = document.createElement('img');
-                        const tagsP = document.createElement('p');
-
-                        tittleH3.textContent = 'Nombre del Evento: ' + cita.nombre_evento;
-                        datetimeP.textContent = 'Fecha de Inicio: ' + cita.fecha_inicio + ' - Fecha de Fin: ' + cita.fecha_fin;
-                        descripcionP.textContent = 'Descripción: ' + cita.descripcion;
-                        imgEvento.src = cita.img_evento;
-                        imgEvento.alt = cita.nombre_evento;
-                        tagsP.textContent = 'Tags: ' + (cita.tags ? cita.tags.join(', ') : 'No hay tags');
-
-                        divEvento.appendChild(tittleH3);
-                        divEvento.appendChild(datetimeP);
-                        divEvento.appendChild(descripcionP);
-                        divEvento.appendChild(imgEvento);
-                        divEvento.appendChild(tagsP);
-
-                        container.appendChild(divEvento);
-                    }
                 } else {
-                    document.getElementById('citas-container').innerHTML = '<p>No hay citas disponibles.</p>';
+                    container.innerHTML = '<p>No hay citas disponibles.</p>';
                 }
-            }).catch((error) => {
-                console.error('Error al obtener los datos de Firebase:', error);
-            });
-        } else {
-            document.getElementById('citas-container').innerHTML = '<p>No se proporcionó ID de usuario.</p>';
-        }
+            } else {
+                container.innerHTML = '<p>No hay citas disponibles.</p>';
+            }
+        }).catch((error) => {
+            console.error('Error al obtener los datos de Firebase:', error);
+        });
     </script>
-</body>
-</html>
 
+</body>
+
+</html>
