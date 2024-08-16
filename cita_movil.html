@@ -1,87 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mostrar Citas del Usuario</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #d9f2f8ff;
-            margin: 0;
-            color: #333;
-        }
-
-        h1 {
-            color: #000;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .container {
-            width: 100%; 
-            justify-content: center;
-        }
-
-        .text-box {
-            background-color: #0d9f96ff;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            color: #ffffff;
-        }
-
-        .text-box h3 {
-            margin: 0;
-            color: #ffffff;
-            font-size: 18px;
-            text-align: center;
-        }
-
-        .text-box p {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #ffffff;
-        }
-    </style>
+    <title>Unimentor Citas</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
 </head>
-
 <body>
-    <h1>Citas del Usuario</h1>
-    <div id="citas-container" class="container"></div>
+    <div id="citas-container"></div>
 
     <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBi1bxaWC2r5jtLtfBI6yqS7ejsWtgAJmI",
+            authDomain: "unimentor-idgs91.firebaseapp.com",
+            databaseURL: "https://unimentor-idgs91-default-rtdb.firebaseio.com",
+            projectId: "unimentor-idgs91",
+            storageBucket: "unimentor-idgs91.appspot.com",
+            messagingSenderId: "944650061053",
+            appId: "1:944650061053:web:5254d9cf776f84eca8ea94",
+            measurementId: "G-7B0H2FKPCC"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         // Obtener el ID del usuario desde la URL
         const urlParams = new URLSearchParams(window.location.search);
         const usuarioId = urlParams.get('usuarioId');
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
         if (usuarioId) {
-            // Configuración de Firebase
-            const firebaseConfig = {
-                apiKey: "AIzaSyBi1bxaWC2r5jtLtfBI6yqS7ejsWtgAJmI",
-                authDomain: "unimentor-idgs91.firebaseapp.com",
-                databaseURL: "https://unimentor-idgs91-default-rtdb.firebaseio.com",
-                projectId: "unimentor-idgs91",
-                storageBucket: "unimentor-idgs91.appspot.com",
-                messagingSenderId: "944650061053",
-                appId: "1:944650061053:web:5254d9cf776f84eca8ea94",
-                measurementId: "G-7B0H2FKPCC"
-            };
-
-            // Inicializar Firebase
-            const app = initializeApp(firebaseConfig);
-            const database = getDatabase(app);
-
             // Obtener la lista de elementos desde Firebase filtrando por ID de usuario
-            const dbRef = ref(database);
-            get(child(dbRef, 'citas')).then((snapshot) => {
+            const dbRef = database.ref('citas');
+            dbRef.once('value').then((snapshot) => {
                 if (snapshot.exists()) {
                     const allCitas = snapshot.val();
                     const citasUsuario = {};
@@ -110,7 +63,6 @@
                         descripcionP.textContent = 'Descripción: ' + cita.descripcion;
                         imgEvento.src = cita.img_evento;
                         imgEvento.alt = cita.nombre_evento;
-                        imgEvento.style.maxWidth = '100%';
                         tagsP.textContent = 'Tags: ' + (cita.tags ? cita.tags.join(', ') : 'No hay tags');
 
                         divEvento.appendChild(tittleH3);
@@ -132,5 +84,4 @@
         }
     </script>
 </body>
-
 </html>
