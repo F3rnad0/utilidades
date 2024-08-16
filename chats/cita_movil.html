@@ -1,84 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mostrar Citas del Usuario</title>
-    <style>
-         html {
-            margir:0;
-            padding:0;
-            }
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #d9f2f8ff;
-            margin: 0;
-            color: #333;
-            
-        }
-
-        h1 {
-            color: #000;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .container {
-            width: 100%; 
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            
-            
-        }
-
-        .text-box {
-            background-color: #0d9f96ff;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            justify-content: center;
-             align-items: center;
-            color: #ffffff;
-        }
-
-        .text-box h3 {
-              margin: 0;
-            color: #ffffff;
-            font-size: 18px;
-            text-align: center;
-
-        }
-
-        .text-box p {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #ffffff;
-            text-align: center;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .text-box img {
-            max-width: 100%;
-            border-radius: 4px;
-        }
-    </style>
+    <title>Unimentor Citas</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
 </head>
-
 <body>
-    <h1>Citas del Usuario</h1>
-    <div id="citas-container" class="container"></div>
+    <div id="citas-container"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
-
+    <script>
         // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBi1bxaWC2r5jtLtfBI6yqS7ejsWtgAJmI",
@@ -92,8 +24,8 @@
         };
 
         // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         // Obtener el ID del usuario desde la URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -101,8 +33,8 @@
 
         if (usuarioId) {
             // Obtener la lista de elementos desde Firebase filtrando por ID de usuario
-            const dbRef = ref(database);
-            get(child(dbRef, 'citas')).then((snapshot) => {
+            const dbRef = database.ref('citas');
+            dbRef.once('value').then((snapshot) => {
                 if (snapshot.exists()) {
                     const allCitas = snapshot.val();
                     const citasUsuario = {};
@@ -152,5 +84,5 @@
         }
     </script>
 </body>
-
 </html>
+
