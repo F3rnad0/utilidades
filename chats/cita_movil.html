@@ -48,6 +48,11 @@
             font-size: 16px;
             color: #ffffff;
         }
+
+        .text-box img {
+            max-width: 100%;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -55,30 +60,31 @@
     <h1>Citas del Usuario</h1>
     <div id="citas-container" class="container"></div>
 
-    <script>
-        // Obtener el ID del usuario desde la URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const usuarioId = urlParams.get('usuarioId');
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
         import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBi1bxaWC2r5jtLtfBI6yqS7ejsWtgAJmI",
+            authDomain: "unimentor-idgs91.firebaseapp.com",
+            databaseURL: "https://unimentor-idgs91-default-rtdb.firebaseio.com",
+            projectId: "unimentor-idgs91",
+            storageBucket: "unimentor-idgs91.appspot.com",
+            messagingSenderId: "944650061053",
+            appId: "1:944650061053:web:5254d9cf776f84eca8ea94",
+            measurementId: "G-7B0H2FKPCC"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Obtener el ID del usuario desde la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const usuarioId = urlParams.get('usuarioId');
+
         if (usuarioId) {
-            // Configuración de Firebase
-            const firebaseConfig = {
-                apiKey: "AIzaSyBi1bxaWC2r5jtLtfBI6yqS7ejsWtgAJmI",
-                authDomain: "unimentor-idgs91.firebaseapp.com",
-                databaseURL: "https://unimentor-idgs91-default-rtdb.firebaseio.com",
-                projectId: "unimentor-idgs91",
-                storageBucket: "unimentor-idgs91.appspot.com",
-                messagingSenderId: "944650061053",
-                appId: "1:944650061053:web:5254d9cf776f84eca8ea94",
-                measurementId: "G-7B0H2FKPCC"
-            };
-
-            // Inicializar Firebase
-            const app = initializeApp(firebaseConfig);
-            const database = getDatabase(app);
-
             // Obtener la lista de elementos desde Firebase filtrando por ID de usuario
             const dbRef = ref(database);
             get(child(dbRef, 'citas')).then((snapshot) => {
@@ -110,7 +116,6 @@
                         descripcionP.textContent = 'Descripción: ' + cita.descripcion;
                         imgEvento.src = cita.img_evento;
                         imgEvento.alt = cita.nombre_evento;
-                        imgEvento.style.maxWidth = '100%';
                         tagsP.textContent = 'Tags: ' + (cita.tags ? cita.tags.join(', ') : 'No hay tags');
 
                         divEvento.appendChild(tittleH3);
