@@ -1,14 +1,17 @@
-/* Estilos generales para el cuerpo */
+html {
+    margir:0;
+    padding:0;
+    background-color: #d9f2f8ff;
+}
 body {
     font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
+    background-color: #d9f2f8ff;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: auto;
-    background: none;
 }
 
 /* Contenedor del chatbot */
