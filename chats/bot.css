@@ -16,7 +16,7 @@ body {
 
 /* Contenedor del chatbot */
 #chatbot {
-    width: 800px; /* Aumentado de 500px a 700px */
+    width: 100%; /* Aumentado de 500px a 700px */
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -25,6 +25,7 @@ body {
     flex-direction: column;
     max-height: 90vh;
     overflow-y: scroll;
+    
 }
 
 /* Área de mensajes */
