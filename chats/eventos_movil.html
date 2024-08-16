@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evento</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #d9f2f8ff;
+            margin: 0;
+            color: #333;
+        }
+
+        h1 {
+            color: #000;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            width: 100%; 
+            justify-content: center;
+        }
+
+        .text-box {
+            background-color: #0d9f96ff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .text-box h3 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .text-box p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Proximos Eventos</h1>
+    <div id="text-box-container" class="container"></div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBi1bxaWC2r5jtLtfBI6yqS7ejsWtgAJmI",
+            authDomain: "unimentor-idgs91.firebaseapp.com",
+            databaseURL: "https://unimentor-idgs91-default-rtdb.firebaseio.com",
+            projectId: "unimentor-idgs91",
+            storageBucket: "unimentor-idgs91.appspot.com",
+            messagingSenderId: "944650061053",
+            appId: "1:944650061053:web:5254d9cf776f84eca8ea94",
+            measurementId: "G-7B0H2FKPCC"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Referencia al contenedor
+        const container = document.getElementById('text-box-container');
+
+        // Obtener la lista de elementos desde Firebase
+        const dbRef = ref(database);
+        get(child(dbRef, 'eventos')).then((snapshot) => {
+            if (snapshot.exists()) {
+                const values = snapshot.val();
+                for (const key in values) {
+                    const evento = values[key];
+                    console.log(evento);
+                    const divEvento = document.createElement('div');
+                    divEvento.className = 'text-box';
+                    const tittleH3 = document.createElement('h3');
+                    tittleH3.textContent = 'Nombre del Evento: ' + evento.nombre_evento;
+                    const datetimeP = document.createElement('p');
+                    datetimeP.textContent = 'Fecha de Inicio: ' + evento.fecha_inicio + ' - Fecha de Fin: ' + evento.fecha_fin;
+                    const descripcionP = document.createElement('p');
+                    descripcionP.textContent = 'Descripción: ' + evento.descripcion;
+                    const imgEvento = document.createElement('img');
+                    imgEvento.src = evento.img_evento;
+                    imgEvento.alt = evento.nombre_evento;
+                    imgEvento.style.maxWidth = '100%'; // Asegura que la imagen no se desborde
+                    const tagsP = document.createElement('p');
+                    tagsP.textContent = 'Tags: ' + (evento.tags ? evento.tags.join(', ') : 'No hay tags');
+                    divEvento.appendChild(tittleH3);
+                    divEvento.appendChild(datetimeP);
+                    divEvento.appendChild(descripcionP);
+                    divEvento.appendChild(imgEvento);
+                    divEvento.appendChild(tagsP);
+                    container.appendChild(divEvento);
+                }
+            } else {
+                container.innerHTML = '<p>No hay datos disponibles.</p>';
+            }
+        }).catch((error) => {
+            console.error('Error al obtener los datos de Firebase:', error);
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
